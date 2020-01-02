@@ -185,8 +185,8 @@ local function onFrameUpdate(e)
 		end
 
 		if (jvk1166z >= 0.8) then
-			local stuntFatigue = tes3.findGMST(tes3.gmst.fFatigueReturnBase) + tes3.findGMST(tes3.gmst.fFatigueReturnMult) * a3_endur2
-			tes3.mobilePlayer.fatigue.current = tes3.mobilePlayer.fatigue.current - stuntFatigue
+			--[[local stuntFatigue = tes3.findGMST(tes3.gmst.fFatigueReturnBase) + tes3.findGMST(tes3.gmst.fFatigueReturnMult) * a3_endur2
+			tes3.mobilePlayer.fatigue.current = tes3.mobilePlayer.fatigue.current - stuntFatigue--]]
 		end
 
 		UI_MenuMulti_poison_rect.alpha = tes3.worldController.menuAlpha
