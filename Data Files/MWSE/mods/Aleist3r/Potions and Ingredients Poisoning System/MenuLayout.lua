@@ -135,61 +135,55 @@ event.register("uiActivated", onMenuActivated, {filter = "MenuStat"})
 
 local function onFrameUpdate(e)
 	local playerRef = tes3.getPlayerRef()
-	if (playerRef ~= nil) then
-		local a3_endur = math.clamp(tes3.mobilePlayer.endurance.base, 0, 100)
-		local a3_endur2 = tes3.mobilePlayer.endurance.current
-		local jvk1166z = toxic/a3_endur
-		if (tes3.mobilePlayer.sleeping == false and tes3.mobilePlayer.waiting == false) then
-			if (tes3.menuMode() == false) then
-				if (toxic > a3_endur) then
-					local damageHP = toxic - a3_endur
-					tes3.mobilePlayer:applyHealthDamage(damageHP)
-					toxic = a3_endur
-				elseif (toxic < 0) then
-					toxic = 0
+	if (UI_MenuMulti_poison_fillbar ~= nil) then
+		if (playerRef ~= nil) then
+			local a3_endur = math.clamp(tes3.mobilePlayer.endurance.base, 0, 100)
+			if (tes3.mobilePlayer.sleeping == false and tes3.mobilePlayer.waiting == false) then
+				if (tes3.menuMode() == false) then
+					if (toxic > a3_endur) then
+						local damageHP = toxic - a3_endur
+						tes3.mobilePlayer:applyHealthDamage(damageHP)
+						toxic = a3_endur
+					elseif (toxic < 0) then
+						toxic = 0
+					end
+					UI_MenuMulti_poison_fillbar.widget.current = toxic
+					UI_MenuMulti_poison_fillbar.widget.max = a3_endur
+					UI_MenuStat_poison_fillbar.widget.current = toxic
+					UI_MenuStat_poison_fillbar.widget.max = a3_endur
 				end
+			else
 				UI_MenuMulti_poison_fillbar.widget.current = toxic
 				UI_MenuMulti_poison_fillbar.widget.max = a3_endur
 				UI_MenuStat_poison_fillbar.widget.current = toxic
 				UI_MenuStat_poison_fillbar.widget.max = a3_endur
 			end
-		else
-			UI_MenuMulti_poison_fillbar.widget.current = toxic
-			UI_MenuMulti_poison_fillbar.widget.max = a3_endur
-			UI_MenuStat_poison_fillbar.widget.current = toxic
-			UI_MenuStat_poison_fillbar.widget.max = a3_endur
-		end
-
-		function onTimerComplete()
-			if (toxic > 0) then
-				if (tes3.mobilePlayer.sleeping) then
-					toxic = toxic - (a3_endur/24)
-					--tes3.messageBox({message = toxic})
-				elseif (tes3.mobilePlayer.waiting) then
-					toxic = toxic - (a3_endur/48)
-				elseif (tes3.mobilePlayer.travelling) then
-					toxic = toxic - (a3_endur/48)
-				elseif (tes3.mobilePlayer.inJail) then
-					toxic = toxic - (a3_endur/48)
-				else
-					if (tes3.menuMode() == false) then
-						toxic = toxic - (a3_endur/72)
+	
+			function onTimerComplete()
+				if (toxic > 0) then
+					if (tes3.mobilePlayer.sleeping) then
+						toxic = toxic - (a3_endur/24)
+					elseif (tes3.mobilePlayer.waiting) then
+						toxic = toxic - (a3_endur/48)
+					elseif (tes3.mobilePlayer.travelling) then
+						toxic = toxic - (a3_endur/48)
+					elseif (tes3.mobilePlayer.inJail) then
+						toxic = toxic - (a3_endur/48)
+					else
+						if (tes3.menuMode() == false) then
+							toxic = toxic - (a3_endur/72)
+						end
 					end
 				end
 			end
+	
+			if (toxicityTimer == 0) then
+				timer.start({duration = 1, callback = onTimerComplete, iterations = -1, type = timer.game})
+				toxicityTimer = 1
+			end
+	
+			UI_MenuMulti_poison_rect.alpha = tes3.worldController.menuAlpha
 		end
-
-		if (toxicityTimer == 0) then
-			timer.start({duration = 1, callback = onTimerComplete, iterations = -1, type = timer.game})
-			toxicityTimer = 1
-		end
-
-		if (jvk1166z >= 0.8) then
-			--[[local stuntFatigue = tes3.findGMST(tes3.gmst.fFatigueReturnBase) + tes3.findGMST(tes3.gmst.fFatigueReturnMult) * a3_endur2
-			tes3.mobilePlayer.fatigue.current = tes3.mobilePlayer.fatigue.current - stuntFatigue--]]
-		end
-
-		UI_MenuMulti_poison_rect.alpha = tes3.worldController.menuAlpha
 	end
 end
 
